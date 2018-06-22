@@ -1,21 +1,44 @@
 from RandomVariable import Random_Variable
 import matplotlib.pyplot as plt
 from scipy import stats
+import random
 import numpy as np
 from hmmlearn import hmm
 
 class HiddenMarkovModel:
     def __init__(self):
         print('Starting Hidden Markov Model')
-        transitionMatrix = np.array([[0.7, 0.3], [0.5, 0.5]])
+        transitionMatrix = np.array([[0.3, 0.7], [0.5, 0.5]])
 
         state2color = {}
         state2color['H'] = 'green'
         state2color['I'] = 'red'
-        samplesMarkov = self.markov_chain(transitionMatrix, 0, ['H', 'I'], 300)
+        samplesMarkov = self.markov_chain(transitionMatrix, 0, [0, 1], 300)
         print(samplesMarkov)
-        self.plot_player_samples(samplesMarkov, state2color)
-
+        emitedEvidence =[]
+        for state in samplesMarkov:
+            if state == 0:
+                evidenceRandomNumber = random.random()
+                if evidenceRandomNumber < 0.7:
+                    emitedEvidence.append( 2)
+                elif evidenceRandomNumber < 0.8:
+                    emitedEvidence.append( 1)
+                else:
+                    emitedEvidence.append( 0)
+            else:
+                evidenceRandomNumber = random.random()
+                if evidenceRandomNumber < 0.6:
+                    emitedEvidence.append( 1)
+                elif evidenceRandomNumber < 0.9:
+                    emitedEvidence.append( 0)
+                else:
+                    emitedEvidence.append( 2)
+        model = hmm.MultinomialHMM(n_components=2)
+        emitedEvidence = np.reshape(emitedEvidence, (-1, 1))
+        # print(emitedEvidence)
+        print(model.fit(emitedEvidence, [300]))
+        print(model.transmat_)
+        print(model.emissionprob_)
 
     def markov_chain(self, transitionMatrix, state, state_names, samples):
         (rows, cols) = transitionMatrix.shape
