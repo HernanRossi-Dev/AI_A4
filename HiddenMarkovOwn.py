@@ -1,5 +1,4 @@
-import matplotlib.pyplot as plt
-from scipy import stats
+
 import numpy as np
 from hmmlearn import hmm
 import random
@@ -46,16 +45,15 @@ class HiddenMarkov:
                     currentState = 0
 
 
-
         model = hmm.MultinomialHMM(n_components=2)
-        # print(stateList)
-        # print(emitedEvidence)
         emitedEvidence = np.reshape(emitedEvidence, (-1,1))
         stateList = np.reshape(stateList, (-1,1))
 
         print(model.fit(emitedEvidence, [300]))
+
         print(model.transmat_)
         print(model.emissionprob_)
+
         emissionPredict = model.predict(emitedEvidence)
         correctPredictions = 0
         for i in range(0, 300):
